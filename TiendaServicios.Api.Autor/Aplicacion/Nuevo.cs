@@ -32,7 +32,8 @@ namespace TiendaServicios.Api.Autor.Aplicacion
                 {
                     Nombre = request.Nombre,
                     FechaNacimiento = request.FechaNacimiento,
-                    Apellido = request.Apellido
+                    Apellido = request.Apellido,
+                    AutorLibroGuid = Convert.ToString(Guid.NewGuid())
                 };
 
                 _contexto.AutorLibro.Add(autorLibro);
