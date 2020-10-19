@@ -16,7 +16,7 @@ namespace TiendaServicios.Api.Autor.Controllers
     {
         private readonly IMediator _mediator;
 
-        public AutorController(IMediator mediator) {
+        public AutorController(IMediator mediator) {    
             _mediator = mediator;
         }
 
