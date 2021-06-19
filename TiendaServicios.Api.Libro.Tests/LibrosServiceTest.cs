@@ -37,27 +37,45 @@ namespace TiendaServicios.Api.Libro.Tests
             dbSet.As<IQueryable<LibreriaMaterial>>().Setup(x => x.Expression).Returns(dataPrueba.Expression);
             dbSet.As<IQueryable<LibreriaMaterial>>().Setup(x => x.ElementType).Returns(dataPrueba.ElementType);
             dbSet.As<IQueryable<LibreriaMaterial>>().Setup(x => x.GetEnumerator()).Returns(dataPrueba.GetEnumerator());
+
+            dbSet.As<IAsyncEnumerable<LibreriaMaterial>>().Setup(x => x.GetAsyncEnumerator(new System.Threading.CancellationToken()))
+                .Returns(new AsyncEnumerator<LibreriaMaterial>(dataPrueba.GetEnumerator()));
+
+            var contexto = new Mock<ContextoLibreria>();
+            contexto.Setup(x => x.LibreriaMaterial).Returns(dbSet.Object);
+
+            return contexto;
         }
 
         [Fact]
-        public void GetLibros()
+        public async void GetLibros()
         {
+            System.Diagnostics.Debugger.Launch();
             // que metodo dentro de mi microservice libro se esta encargando
             // de realizar la consulta de libros de la base de datos ??
             // 1. Emular a la instancia de entity framework core - ContextoLibreria
             // pára emular las acciones y eventos de un objeto en un ambiente de unit test
             // usaremos un objeto de Mock
 
-            var mockContexto = new Mock<ContextoLibreria>();
+            var mockContexto = CrearContexto();
 
             // 2. Emular al mapping IMapper
 
-            var mockMapper = new Mock<IMapper>();
+            var mapConfig = new MapperConfiguration(cfg =>
+           {
+               cfg.AddProfile(new MappingTest());
+           });
 
+            var mapper = mapConfig.CreateMapper();
             // 3. Instanciar a la clase Manejador y pasarle como parametro los metodos
 
-            Consulta.Manejador manejador = new Consulta.Manejador(mockContexto.Object, mockMapper.Object);
+            Consulta.Manejador manejador = new Consulta.Manejador(mockContexto.Object, mapper);
 
+            Consulta.Ejecuta request = new Consulta.Ejecuta();
+
+            var lista = await manejador.Handle(request, new System.Threading.CancellationToken());
+
+            Assert.True(lista.Any());
 
         }
     }
