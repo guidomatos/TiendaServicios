@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace TiendaServicios.Api.Autor.Aplicacion
+namespace TiendaServicios.Api.Gateway.LibroRemote
 {
-    public class AutorDto
+    public class AutorModeloRemote
     {
         public string Nombre { get; set; }
         public string Apellido { get; set; }
